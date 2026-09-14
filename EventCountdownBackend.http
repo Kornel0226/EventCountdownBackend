@@ -1,0 +1,9 @@
+@EventCountdownBackend_HostAddress = http://localhost:5022
+
+GET {{EventCountdownBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+GET {{EventCountdownBackend_HostAddress}}/api/events/
+Accept: applicaiton/json
