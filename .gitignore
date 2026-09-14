@@ -364,3 +364,5 @@ FodyWeavers.xsd
 
 # sqlite databse
 events.db
+events.db-shm
+events.db-wal
