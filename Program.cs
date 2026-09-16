@@ -1,5 +1,7 @@
 using EventCountdownBackend.Data;
+using EventCountdownBackend.Interfaces;
 using EventCountdownBackend.JsonFormatters;
+using EventCountdownBackend.Repository;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
@@ -12,6 +14,9 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new MilisecondDateTimeConverter());
     });
+
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 

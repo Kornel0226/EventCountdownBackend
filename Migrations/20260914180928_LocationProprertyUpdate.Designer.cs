@@ -3,6 +3,7 @@ using System;
 using EventCountdownBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventCountdownBackend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260914180928_LocationProprertyUpdate")]
+    partial class LocationProprertyUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.12");
@@ -20,12 +23,6 @@ namespace EventCountdownBackend.Migrations
             modelBuilder.Entity("EventCountdownBackend.Models.Event", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("City")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Country")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
@@ -38,29 +35,16 @@ namespace EventCountdownBackend.Migrations
                     b.Property<DateTime>("EventDateTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FormattedAddress")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsOnline")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<double?>("Latitude")
-                        .HasColumnType("REAL");
-
-                    b.Property<double?>("Longitude")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("OnlineEventUrl")
+                    b.Property<string>("Location")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PlaceId")
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -68,10 +52,7 @@ namespace EventCountdownBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Events", t =>
-                        {
-                            t.HasCheckConstraint("CK_Event_PhysicalLocationRequired", "([IsOnline] = 1) OR ([Latitude] IS NOT NULL AND [Longitude] IS NOT NULL AND [FormattedAddress] IS NOT NULL)");
-                        });
+                    b.ToTable("Events");
                 });
 #pragma warning restore 612, 618
         }

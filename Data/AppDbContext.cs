@@ -17,15 +17,38 @@ namespace EventCountdownBackend.Data
             {
                 if (entry.State == EntityState.Added)
                 {
+                    // Add the current date when entity is created
+
                     entry.Entity.CreatedAt = DateTime.UtcNow;
                 }
                 else if (entry.State == EntityState.Modified)
-                {
+                {   
+                    // When entity is updated 
+
                     entry.Entity.UpdatedAt = DateTime.UtcNow;
                 }
             }
 
             return base.SaveChangesAsync(cancellationToken);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Enforce physical location completeness at the database level:
+            // - Online events (IsOnline == true) do not require location data.
+            // - In-person events (IsOnline == false) MUST provide Latitude, Longitude, and FormattedAddress.
+
+            modelBuilder.Entity<Event>(
+                entity => {
+                    entity.ToTable(t => t.HasCheckConstraint(
+                        "CK_Event_PhysicalLocationRequired",
+                        "([IsOnline] = 1) OR ([Latitude] IS NOT NULL AND [Longitude] IS NOT NULL AND [FormattedAddress] IS NOT NULL)"
+                        ));
+                }
+             );
+
         }
     }
 }

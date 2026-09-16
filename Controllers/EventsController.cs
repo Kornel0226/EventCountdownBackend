@@ -2,36 +2,36 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EventCountdownBackend.Models;
 using EventCountdownBackend.Data;
+using EventCountdownBackend.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 [Route("api/[controller]")]
 [ApiController]
-public class EventsController : ControllerBase
+public class EventsController(IEventRepository eventRepository) : ControllerBase
 {
-    private readonly AppDbContext _context;
-    public EventsController(AppDbContext context)
-    {
-        _context = context;
-    }
 
     // GET: api/Event
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Event>>> GetEvent()
+    public async Task<ActionResult<ICollection<Event>>> GetEvent()
     {
-        return await _context.Events.ToListAsync();
+        // Will have to implement error handling and stuff, its just a fast implementation for basic functionality
+
+        var events = await eventRepository.GetAllAsync();
+        return Ok(events);
     }
 
     // GET: api/Event/5
     [HttpGet("{id}")]
     public async Task<ActionResult<Event>> GetEvent(string id)
     {
-        var eventEntity = await _context.Events.FindAsync(id);
+        var eventEntity = await eventRepository.GetByIdAsync(id);
 
         if (eventEntity == null)
         {
             return NotFound();
         }
 
-        return eventEntity;
+        return Ok(eventEntity);
     }
 
   
@@ -40,30 +40,19 @@ public class EventsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Event>> PostEvent(Event eventEntity)
     {
-        _context.Events.Add(eventEntity);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction("GetEvent", new { id = eventEntity.Id }, eventEntity);
+        throw new NotImplementedException("Creating new events not implemented yet");
     }
 
     // DELETE: api/Event/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteEvent(string? id)
     {
-        var eventEntity = await _context.Events.FindAsync(id);
-        if (eventEntity == null)
-        {
-            return NotFound();
-        }
-
-        _context.Events.Remove(eventEntity);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
+        throw new NotImplementedException("Deleting event not implemented yet");
     }
 
-    private bool EventExists(string? id)
+    private async Task<ActionResult<bool>> EventExists(string id)
     {
-        return _context.Events.Any(e => e.Id == id);
+        var result = await eventRepository.ExistsAsync(id);
+        return Ok(result);
     }
 }
