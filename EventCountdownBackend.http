@@ -6,4 +6,9 @@ Accept: application/json
 ###
 
 GET {{EventCountdownBackend_HostAddress}}/api/events/
-Accept: applicaiton/json
+Accept: application/json
+
+###
+
+DELETE {{EventCountdownBackend_HostAddress}}/api/events/1
+Accept: application/json

@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using EventCountdownBackend.Models;
-using EventCountdownBackend.Data;
 using EventCountdownBackend.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
+
 
 [Route("api/[controller]")]
 [ApiController]
@@ -14,8 +12,6 @@ public class EventsController(IEventRepository eventRepository) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<ICollection<Event>>> GetEvent()
     {
-        // Will have to implement error handling and stuff, its just a fast implementation for basic functionality
-
         var events = await eventRepository.GetAllAsync();
         return Ok(events);
     }
@@ -45,9 +41,16 @@ public class EventsController(IEventRepository eventRepository) : ControllerBase
 
     // DELETE: api/Event/5
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteEvent(string? id)
+    public async Task<IActionResult> DeleteEvent(string id, CancellationToken ct = default)
     {
-        throw new NotImplementedException("Deleting event not implemented yet");
+        var deleted = await eventRepository.DeleteAsync(id, ct);
+
+        if (deleted == false)
+        {
+            throw new KeyNotFoundException($"Event with ID {id} was not found.");
+        }
+
+        return NoContent();
     }
 
     private async Task<ActionResult<bool>> EventExists(string id)

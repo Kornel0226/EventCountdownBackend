@@ -1,9 +1,9 @@
 using EventCountdownBackend.Data;
 using EventCountdownBackend.Interfaces;
 using EventCountdownBackend.JsonFormatters;
+using EventCountdownBackend.Middleware;
 using EventCountdownBackend.Repository;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,12 +20,16 @@ builder.Services.AddScoped<IEventRepository, EventRepository>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+
+// Add Custom Exception Handling Service
+
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-
-
 
 var app = builder.Build();
 
@@ -49,11 +53,10 @@ using (var scope = app.Services.CreateScope())
 
 // Configure the HTTP request pipeline.
 
-
 app.UseHttpsRedirection();
-
+app.UseExceptionHandler();
 app.UseAuthorization();
 
-app.MapControllers();
 
+app.MapControllers();
 app.Run();
