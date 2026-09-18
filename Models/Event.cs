@@ -20,6 +20,10 @@
         public string? City { get; set; }
         public string? Address { get; set; }
         public int? ZipCode { get; set; }
+
+
+        // When User and authorization + authentication gets implemented
+        public string? UserId { get; set; }
     }
 
 }

@@ -28,8 +28,7 @@ namespace EventCountdownBackend.Data
                     Country = "United States",
                     Address = "Times Square, Manhattan",
                     ZipCode = 10036,
-                    EventDateTime = new DateTime(2026, 12, 31, 23, 59, 59, DateTimeKind.Utc),
-                    CreatedAt = DateTime.UtcNow
+                    EventDateTime = new DateTime(2026, 12, 31, 23, 59, 59, DateTimeKind.Utc),               
                 },
 
                 // In-Person Event 2 (Station F, Paris)
@@ -45,7 +44,6 @@ namespace EventCountdownBackend.Data
                     ZipCode = 75013,
                     Address = "55 Bd Vincent Auriol",
                     EventDateTime = DateTime.UtcNow.AddMonths(1),
-                    CreatedAt = DateTime.UtcNow
                 },
 
                 // Online Event (Virtual Hackathon - No physical location required)
@@ -58,7 +56,6 @@ namespace EventCountdownBackend.Data
                     IsOnline = true,
                     OnlineEventUrl = "https://meet.google.com/abc-defg-hij",
                     EventDateTime = DateTime.UtcNow.AddDays(14),
-                    CreatedAt = DateTime.UtcNow
                 }
             };
 

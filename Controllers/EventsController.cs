@@ -1,12 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
 using EventCountdownBackend.Models;
 using EventCountdownBackend.Interfaces;
+using EventCountdownBackend.DTOs;
+using EventCountdownBackend.Common.Results;
+using System.Reflection.Metadata.Ecma335;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 
 [Route("api/[controller]")]
 [ApiController]
 public class EventsController(IEventRepository eventRepository) : ControllerBase
 {
+
+
+    // UserId is nullable for now beacuse it not exist yet, but it will later.
+
 
     // GET: api/Event
     [HttpGet]
@@ -34,16 +42,33 @@ public class EventsController(IEventRepository eventRepository) : ControllerBase
     // POST: api/Event
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<Event>> PostEvent(Event eventEntity)
+    public async Task<ActionResult<Event>> PostEvent(CreateEventRequestDTO eventRequest, CancellationToken ct)
     {
-        throw new NotImplementedException("Creating new events not implemented yet");
+        var createdEvent = await eventRepository.CreateAsync(eventRequest, ct);
+
+        return CreatedAtAction(nameof(GetEvent), new { id = createdEvent.Id }, createdEvent);
+    }
+
+    [HttpPatch("{id}")]
+    public async Task<ActionResult<Event>> PatchEvent(string id, UpdateEventRequestDTO updateEventRequest, CancellationToken ct)
+    {
+        var updatedEvent = await eventRepository.UpdateAsync(id, null, updateEventRequest, ct);
+
+        return updatedEvent.Status switch
+        {
+            MutationStatus.Success => Ok(updatedEvent.Data),
+            MutationStatus.NotFound => NotFound(),
+            MutationStatus.Forbidden => Forbid(),
+            _ => StatusCode(500)
+        };
+        
     }
 
     // DELETE: api/Event/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteEvent(string id, CancellationToken ct = default)
     {
-        var deleted = await eventRepository.DeleteAsync(id, ct);
+        var deleted = await eventRepository.DeleteAsync(id, string.Empty, ct);
 
         if (deleted == false)
         {

@@ -1,6 +1,6 @@
 @EventCountdownBackend_HostAddress = http://localhost:5022
 
-GET {{EventCountdownBackend_HostAddress}}/weatherforecast/
+GET {{EventCountdownBackend_HostAddress}}/api/events/22f8b089-86c4-4f78-a6b2-edab6386d60a
 Accept: application/json
 
 ###
@@ -10,5 +10,48 @@ Accept: application/json
 
 ###
 
-DELETE {{EventCountdownBackend_HostAddress}}/api/events/1
+DELETE {{EventCountdownBackend_HostAddress}}/api/events/8efded73-84ce-42e9-a28b-3353089c5662
 Accept: application/json
+
+###
+
+POST {{EventCountdownBackend_HostAddress}}/api/events/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "New Year Countdown",
+  "eventDate": "2027-01-01T00:00:00Z",
+  "description": "Celebrating the new year",
+  "Country": "Hungary",
+  "City": "Budapest",
+  "Address": "I made it up 22",
+  "ZipCode": "1930"
+}
+
+###
+
+POST {{EventCountdownBackend_HostAddress}}/api/events/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "New Year Countdown",
+  "eventDate": "2027-01-01T00:00:00Z",
+  "description": "Celebrating the new year",
+  "isOnline": true
+}
+
+###
+
+Patch {{EventCountdownBackend_HostAddress}}/api/events/22f8b089-86c4-4f78-a6b2-edab6386d60a
+Content-Type: application/json
+Accept: application/json
+
+{
+  "City": "Budapest",
+  "Country": "Hungary",
+  "ZipCode": "1103",
+  "Address": "Random utca 22",
+  "isOnline": true
+}

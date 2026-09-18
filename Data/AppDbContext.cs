@@ -38,13 +38,13 @@ namespace EventCountdownBackend.Data
 
             // Enforce physical location completeness at the database level:
             // - Online events (IsOnline == true) do not require location data.
-            // - In-person events (IsOnline == false) MUST provide Latitude, Longitude, and FormattedAddress.
+            // - In-person events (IsOnline == false) MUST provide Country, City, Address and ZipCode.
 
             modelBuilder.Entity<Event>(
                 entity => {
                     entity.ToTable(t => t.HasCheckConstraint(
                         "CK_Event_PhysicalLocationRequired",
-                        "([IsOnline] = 1) OR ([Latitude] IS NOT NULL AND [Longitude] IS NOT NULL AND [FormattedAddress] IS NOT NULL)"
+                        "([IsOnline] = 1) OR ([City] IS NOT NULL AND [Address] IS NOT NULL AND [Country] IS NOT NULL AND [ZipCode] IS NOT NULL)"
                         ));
                 }
              );

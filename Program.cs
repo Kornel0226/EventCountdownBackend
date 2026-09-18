@@ -1,8 +1,8 @@
 using EventCountdownBackend.Data;
 using EventCountdownBackend.Interfaces;
 using EventCountdownBackend.JsonFormatters;
-using EventCountdownBackend.Middleware;
 using EventCountdownBackend.Repository;
+using EventCountdownBackend.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

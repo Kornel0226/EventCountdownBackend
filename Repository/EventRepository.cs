@@ -1,4 +1,5 @@
-﻿using EventCountdownBackend.Data;
+﻿using EventCountdownBackend.Common.Results;
+using EventCountdownBackend.Data;
 using EventCountdownBackend.DTOs;
 using EventCountdownBackend.Interfaces;
 using EventCountdownBackend.Models;
@@ -8,15 +9,21 @@ namespace EventCountdownBackend.Repository
 {
     public class EventRepository(AppDbContext context) : IEventRepository
     {
-        public Task<Event> CreateAsync(CreateEventRequest createEventDTO, CancellationToken ct = default)
+        public async Task<Event> CreateAsync(CreateEventRequestDTO eventRequest, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            // Convert creation DTO to event entity, and create it in db
+
+            var entry = await context.Events.AddAsync(eventRequest.ToEntity(), ct);
+            await context.SaveChangesAsync(ct);
+
+            return entry.Entity;
+          
         }
 
-        public async Task<bool> DeleteAsync(string id, CancellationToken ct = default)
+        public async Task<bool> DeleteAsync(string id, string? userId, CancellationToken ct = default)
         {
             var rowAffected = await context.Events
-                .Where(e => e.Id == id)
+                .Where(e => e.Id == id && e.UserId == userId)
                 .ExecuteDeleteAsync(ct);
 
             return rowAffected > 0;
@@ -37,9 +44,31 @@ namespace EventCountdownBackend.Repository
             return await context.Events.FindAsync([id], cancellationToken: ct);
         }
 
-        public Task<Event?> UpdateAsync(string id, Event eventEntity, CancellationToken ct = default)
+        public async Task<MutationResult<Event>> UpdateAsync(
+            string id,
+            string? userId,
+            UpdateEventRequestDTO eventUpdateRequest,
+            CancellationToken ct = default
+            )
         {
-            throw new NotImplementedException();
+            var existingEvent = await context.Events.FirstOrDefaultAsync(e => e.Id == id, ct);
+
+            /*
+             * Return MutationResult, so if the request failed, the controller can access the cause (404/403).
+             */
+
+            if (existingEvent is null) {
+                return new MutationResult<Event>(MutationStatus.NotFound);
+            }
+
+            if (existingEvent.Id is not null && existingEvent.UserId != userId)
+            {
+               return new MutationResult<Event>(MutationStatus.Forbidden);
+            }
+
+            eventUpdateRequest.PatchEntity(existingEvent);
+            await context.SaveChangesAsync(ct);
+            return new MutationResult<Event>(MutationStatus.Success, existingEvent);
         }
     }
 }

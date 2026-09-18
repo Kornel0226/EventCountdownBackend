@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EventCountdownBackend.Middleware
+namespace EventCountdownBackend.Services
 {
 
     /*
